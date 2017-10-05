@@ -32,20 +32,20 @@ console.log('Signature', signature, 'from', address, 'is', verified, '\n\n');
 
 // Get testnet info
 console.log('Getting testnet info..');
-$.get('http://tbtc.blockr.io/api/v1/coin/info', function(response) {
-  console.log('BTC Testnet Info', response.data, '\n\n');
+$.get('https://test-insight.bitpay.com/api/info', function(response) {
+  console.log('BTC Testnet Info', response, '\n\n');
 });
 
 // Get balance of address
 console.log('Getting address balance..');
-$.get('http://tbtc.blockr.io/api/v1/address/info/mpCX4JLdCNeUDjf5sfrsyQArBHrcVDDuib', function(response) {
-  console.log('mpCX4JLdCNeUDjf5sfrsyQArBHrcVDDuib Balance', response.data.balance, '\n\n');
+$.get('https://test-insight.bitpay.com/api/addr/mpCX4JLdCNeUDjf5sfrsyQArBHrcVDDuib/balance', function(response) {
+  console.log('mpCX4JLdCNeUDjf5sfrsyQArBHrcVDDuib Balance', response, '\n\n');
 });
 
 // Get txs of address
 console.log('Getting address txs..');
-$.get('http://tbtc.blockr.io/api/v1/address/txs/mpCX4JLdCNeUDjf5sfrsyQArBHrcVDDuib', function(response) {
-  console.log('mpCX4JLdCNeUDjf5sfrsyQArBHrcVDDuib Transactions', response.data, '\n\n');
+$.get('https://test-insight.bitpay.com/api/txs/?address=mpCX4JLdCNeUDjf5sfrsyQArBHrcVDDuib', function(response) {
+  console.log('mpCX4JLdCNeUDjf5sfrsyQArBHrcVDDuib Transactions', response, '\n\n');
 });
 
 if (TEST_SEND){
@@ -58,22 +58,10 @@ if (TEST_SEND){
   console.log('To address:',toAddress.toString());
   // Get the unspent outputs of address
   console.log('Getting address unspents..');
-  $.get('http://tbtc.blockr.io/api/v1/address/unspent/mpCX4JLdCNeUDjf5sfrsyQArBHrcVDDuib', function(response) {
-    console.log('mpCX4JLdCNeUDjf5sfrsyQArBHrcVDDuib unspents', response.data, '\n\n');
+  $.get('https://test-insight.bitpay.com/api/addr/mpCX4JLdCNeUDjf5sfrsyQArBHrcVDDuib/utxo', function(response) {
+    console.log('mpCX4JLdCNeUDjf5sfrsyQArBHrcVDDuib unspents', response, '\n\n');
 
-    var blockrUnspents = response.data.unspent;
-    var bitcoreUnspents = [];
-
-    blockrUnspents.map(function(u, i){
-      bitcoreUnspents.push(
-        new bitcore.Transaction.UnspentOutput({
-          "txid" : u.tx,
-          "vout" : u.n,
-          "scriptPubKey" : u.script,
-          "amount" : u.amount
-        })
-      );
-    });
+    var bitcoreUnspents = response;
 
     console.log('Bitcore unspents:', bitcoreUnspents, '\n\n');
 
@@ -86,7 +74,7 @@ if (TEST_SEND){
     console.log('Bitcore transaction:', transaction);
     console.log('Bitcore transaction hex:', transaction.serialize(), '\n\n');
 
-    $.post("http://tbtc.blockr.io/api/v1/tx/push", { "hex": transaction.serialize() } , function(txResponse) {
+    $.post("https://test-insight.bitpay.com/api/tx/send", { "rawtx": transaction.serialize() } , function(txResponse) {
       console.log('Transaction push response:',txResponse)
     });
 
