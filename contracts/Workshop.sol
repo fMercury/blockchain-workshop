@@ -1,4 +1,4 @@
-pragma solidity ^0.4.11;
+pragma solidity ^0.4.15;
 
 import './zeppelin/math/SafeMath.sol';
 import './zeppelin/ownership/Ownable.sol';
@@ -12,7 +12,7 @@ contract Workshop is Ownable {
 
   mapping(uint => string) public attendants;
 
-  event AttendantAdded(uint256, string);
+  event AttendantAdded(uint256 number, string name);
 
   function Workshop() {
     running = false;
@@ -20,8 +20,7 @@ contract Workshop is Ownable {
   }
 
   function addAttendant(string name) external {
-    if (!running)
-      throw;
+    assert(running);
     attendants[totalAttendants] = name;
     increaseAttendants(1);
     AttendantAdded(totalAttendants, name);
